@@ -1,4 +1,4 @@
-export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJhYzIxZmFiOS0xNTM5LTQ1MzEtYjVmZC1mZmY4MTJmOTRlNjMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMjE4NzEyNiwiZXhwIjoxNzYzNzIzMTI2fQ.P0MAuRE78U3illJU30GwgnachYSjfzkI2dNNDiYB83I"; // token should be in String format
+export const token = env.token;
 
 // API call to create meeting
 export const createMeeting = async ({token}) => {

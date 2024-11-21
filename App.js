@@ -57,21 +57,25 @@ function JoinScreen(props) {
           fontStyle: 'italic',
         }}
       />
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#1178F8',
-          padding: 12,
-          marginTop: 14,
-          borderRadius: 6,
-        }}
-        onPress={() => {
-          console.log('dmeo user ');
-          props.getMeetingId(meetingVal);
-        }}>
-        <Text style={{color: 'white', alignSelf: 'center', fontSize: 18}}>
-          Join Meeting
-        </Text>
-      </TouchableOpacity>
+     <TouchableOpacity
+  style={{
+    backgroundColor: '#1178F8',
+    padding: 12,
+    marginTop: 14,
+    borderRadius: 6,
+  }}
+  onPress={() => {
+    if (meetingVal.trim()) {
+      props.getMeetingId(meetingVal.trim());
+    } else {
+      console.log('Please enter a valid meeting ID');
+    }
+  }}>
+  <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>
+    Join Meeting
+  </Text>
+</TouchableOpacity>
+
     </SafeAreaView>
   );
 }
@@ -179,11 +183,11 @@ function ParticipantList({participants}) {
   );
 }
 
-function MeetingView() {
-  // Get `participants` from useMeeting Hook
-  const {join, leave, toggleWebcam, toggleMic, participants,meetingId} = useMeeting({});
-  console.log("🚀 ~ MeetingView ~ participants:", participants)
+function MeetingView({meetingId}) {
   console.log("🚀 ~ MeetingView ~ meetingId:", meetingId)
+
+  const {join, leave, toggleWebcam, toggleMic, participants} = useMeeting({});
+  // console.log("🚀 ~ MeetingView ~ participants:", participants)
   const participantsArrId = [...participants.keys()];
 
   return (
@@ -205,33 +209,30 @@ function MeetingView() {
 export default function App() {
   const [meetingId, setMeetingId] = useState(null);
 
-  const getMeetingId = async (id = null) => {
+  const getMeetingId = async id => {
     if (!token) {
       console.log('PLEASE PROVIDE TOKEN IN api.js FROM app.videosdk.live');
-      return;
     }
-    const newMeetingId = id || (await createMeeting({ token }));
-    setMeetingId(newMeetingId);
+    const meetingId = id == null ? await createMeeting({token}) : id;
+    setMeetingId(meetingId);
   };
-  
-
   return meetingId ? (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#F6F6FF'}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F6FF' }}>
       <MeetingProvider
         config={{
-          meetingId,
+          meetingId: meetingId,
           micEnabled: false,
           webcamEnabled: true,
           name: 'Test User',
         }}
         token={token}>
-        <MeetingView />
+        <MeetingView meetingId={meetingId}/>
       </MeetingProvider>
     </SafeAreaView>
   ) : (
     <JoinScreen
-      getMeetingId={() => {
-        getMeetingId();
+      getMeetingId={(id) => {
+        getMeetingId(id);
       }}
     />
   );
